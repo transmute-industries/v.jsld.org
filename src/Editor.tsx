@@ -143,6 +143,7 @@ const Editor = () => {
             maxLines={Infinity}
             editorProps={{ $blockScrolling: true }}
             value={dest}
+            readOnly={true}
           />
         </Grid>
       )}
