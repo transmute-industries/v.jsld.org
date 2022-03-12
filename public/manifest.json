@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "JSON-LD Validation",
+  "name": "Yet another JSON-LD validator",
   "icons": [
     {
       "src": "favicon.ico",
