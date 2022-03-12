@@ -2,7 +2,7 @@ import AceEditor from "react-ace";
 import React from "react";
 import "ace-builds/src-noconflict/mode-text";
 import "ace-builds/src-noconflict/mode-json";
-import "ace-builds/src-noconflict/theme-github";
+import "ace-builds/src-noconflict/theme-monokai";
 
 import { Grid } from "@mui/material";
 import Chip from "@mui/material/Chip";
@@ -13,6 +13,8 @@ import CodeIcon from "@mui/icons-material/Code";
 import documentLoader from "./documentLoader";
 import history from "./history";
 import utf8ArrayToStr from "./utf8ArrayToStr";
+
+const editorTheme = "monokai";
 const jsonld = require("jsonld");
 const pako = require("pako");
 const bs58 = require("bs58");
@@ -77,7 +79,7 @@ const Editor = () => {
           format: "application/n-quads",
           documentLoader,
           expansionMap: ({ unmappedProperty }: any) => {
-            if (!unmapped.includes(unmappedProperty)) {
+            if (unmappedProperty && !unmapped.includes(unmappedProperty)) {
               unmapped.push(unmappedProperty);
             }
           },
@@ -97,14 +99,14 @@ const Editor = () => {
     })();
   }, [source]);
   return (
-    <Grid container>
+    <Grid container sx={{ mb: 4 }}>
       <Grid item xs={12}>
-        <Stack direction="column" spacing={1} sx={{ mb: 2 }}>
+        <Stack direction="column" spacing={1} sx={{ mb: 2, mt: 2 }}>
           {parseError && (
             <Chip
               icon={<CodeIcon />}
               label="JSON is not valid"
-              // variant="outlined"
+              variant="outlined"
               color={"error"}
             />
           )}
@@ -114,32 +116,36 @@ const Editor = () => {
                 key={i}
                 icon={<CodeIcon />}
                 label={`${p} is not defined in the context`}
-                // variant="outlined"
+                variant="outlined"
                 color={"error"}
               />
             );
           })}
         </Stack>
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid item xs={12} sm={12}>
         <AceEditor
           style={{ width: "100%" }}
           mode={"json"}
-          theme="github"
+          theme={editorTheme}
+          maxLines={Infinity}
           onChange={setSource}
           editorProps={{ $blockScrolling: true }}
           value={source}
         />
       </Grid>
-      <Grid item xs={12} sm={6}>
-        <AceEditor
-          style={{ width: "100%" }}
-          mode={"text"}
-          theme="github"
-          editorProps={{ $blockScrolling: true }}
-          value={dest}
-        />
-      </Grid>
+      {dest !== "" && (
+        <Grid item xs={12} sm={12} sx={{ mt: 2 }}>
+          <AceEditor
+            style={{ width: "100%" }}
+            mode={"text"}
+            theme={editorTheme}
+            maxLines={Infinity}
+            editorProps={{ $blockScrolling: true }}
+            value={dest}
+          />
+        </Grid>
+      )}
     </Grid>
   );
 };
