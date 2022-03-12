@@ -32,6 +32,7 @@ const exampleJson = JSON.stringify(
     type: "Organization",
     name: "Bartell Inc 🔥",
     description: "Realigned maximized alliance",
+    bar: "baz",
   },
   null,
   2
