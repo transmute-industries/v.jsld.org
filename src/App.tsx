@@ -16,7 +16,7 @@ const theme = createTheme({
       default: grey[800],
     },
     primary: {
-      main: deepPurple[400],
+      main: deepPurple["200"],
     },
     secondary: {
       main: blue["A200"],
@@ -57,6 +57,7 @@ function App() {
           colorBackground={deepPurple[500]}
         />
         <Button
+          sx={{ mr: 2 }}
           color={"secondary"}
           variant="contained"
           onClick={() => {
@@ -68,6 +69,16 @@ function App() {
           startIcon={<ShareIcon />}
         >
           Share
+        </Button>
+
+        <Button
+          color={"primary"}
+          variant="outlined"
+          onClick={() => {
+            window.localStorage.clear();
+          }}
+        >
+          Clear Cache
         </Button>
         <Editor />
         <ToastContainer theme={"dark"} position="top-left" />
