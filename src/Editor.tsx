@@ -4,7 +4,7 @@ import "ace-builds/src-noconflict/mode-text";
 import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-monokai";
 
-import { Grid } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 // import FaceIcon from "@mui/icons-material/Face";
@@ -56,7 +56,8 @@ const Editor = () => {
       ? getSourceFromHistory(window.location.pathname.substring(1))
       : exampleJson;
   const [source, setSource] = React.useState(defaultEditorValue);
-  const [dest, setDest] = React.useState("");
+  const [canonicalForm, setCanonicalForm] = React.useState("");
+  const [graphForm, setGraphForm] = React.useState("");
 
   const [parseError, setParseError] = React.useState(false);
   const [unmappedProperties, setUnmappedProperties]: any = React.useState([]);
@@ -70,7 +71,7 @@ const Editor = () => {
       } catch (e) {
         console.error("Failed to parse: ", source);
         setParseError(true);
-        setDest("");
+        setCanonicalForm("");
         return;
       }
       try {
@@ -86,16 +87,22 @@ const Editor = () => {
           },
         });
 
+        const framed = await jsonld.frame(parsed, {
+          documentLoader,
+        });
+
+        setGraphForm(JSON.stringify(framed, null, 2));
+
         setUnmappedProperties(unmapped);
         if (unmapped.length) {
-          setDest("");
+          setCanonicalForm("");
         } else {
-          setDest(canonized);
+          setCanonicalForm(canonized);
           setSourceInHistory(source);
         }
       } catch (e) {
         console.error("Failed to canonize: ", source, e);
-        setDest("");
+        setCanonicalForm("");
       }
     })();
   }, [source]);
@@ -135,15 +142,31 @@ const Editor = () => {
           value={source}
         />
       </Grid>
-      {dest !== "" && (
+      {canonicalForm !== "" && (
         <Grid item xs={12} sm={12} sx={{ mt: 2 }}>
+          <Typography color={"primary"}>text/x-nquads</Typography>
           <AceEditor
             style={{ width: "100%" }}
             mode={"text"}
             theme={editorTheme}
             maxLines={Infinity}
             editorProps={{ $blockScrolling: true }}
-            value={dest}
+            value={canonicalForm}
+            readOnly={true}
+          />
+        </Grid>
+      )}
+
+      {graphForm !== "" && (
+        <Grid item xs={12} sm={12} sx={{ mt: 2 }}>
+          <Typography color={"primary"}>application/ld+json</Typography>
+          <AceEditor
+            style={{ width: "100%" }}
+            mode={"text"}
+            theme={editorTheme}
+            maxLines={Infinity}
+            editorProps={{ $blockScrolling: true }}
+            value={graphForm}
             readOnly={true}
           />
         </Grid>
